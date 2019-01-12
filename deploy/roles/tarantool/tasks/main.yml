@@ -1,0 +1,49 @@
+- name: "Data directory"
+  file:
+    path: "{{ tt_dir }}/data"
+    state: directory
+    mode: 0777
+  register: dir_data
+
+- name: "Log directory"
+  file:
+    path: "{{ tt_dir }}/logs"
+    state: directory
+    mode: 0777
+  register: dir_log
+
+- name: "Config directory"
+  file:
+    path: "{{ tt_dir }}/config"
+    state: directory
+    mode: 0755
+  register: dir_config
+
+- name: "Instance lua file"
+  template:
+    src: "node.lua.j2"
+    dest: "{{ dir_config.path }}/node.lua"
+  register: dir_instance_file
+
+- name: Docker container
+  docker_container:
+    image: "{{ tt_node_image }}"
+    name: "{{ inventory_hostname }}"
+    privileged: true
+    state: started
+    restart: true
+    pull: true
+    tty: true
+    restart_policy: on-failure
+    purge_networks: true
+    network_mode: host
+    env:
+      INSTANCE_NAME: "node"
+    volumes:
+      - "{{ dir_data.path }}:/var/lib/tarantool"
+      - "{{ dir_log.path }}:/var/log/tarantool"
+      - "{{ dir_instance_file.dest }}:/usr/local/etc/tarantool/instances.enabled/node.lua"
+
+- name: Start node
+  shell: >
+    docker exec -i {{ inventory_hostname }} tarantoolctl start node

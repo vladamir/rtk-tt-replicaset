@@ -1,0 +1,5 @@
+- hosts: tarantool
+  gather_facts: false
+  become: true
+  roles:
+    - { role: tarantool, tags: tarantool }

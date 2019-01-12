@@ -1,0 +1,10 @@
+tt_node_image: "docker.affisecorp.com/library/tarantool:1.10.2"
+tt_dir: /opt/tarantool
+
+tt_cluster:
+  tt-node1:
+    host: 213.227.132.143
+    port: 3302
+  tt-node2:
+    host: 209.58.181.156
+    port: 3302

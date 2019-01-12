@@ -1,0 +1,36 @@
+version: '3'
+services:
+
+  tt-node-1:
+    image: docker.affisecorp.com/library/tarantool:1.10.2
+    container_name: tt-node-1
+    environment:
+      - "INSTANCE_NAME=node1"
+    command: >
+      sh -c "tarantoolctl start node1; read"
+    volumes:
+      - ./data:/var/lib/tarantool
+      - ./logs:/var/log/tarantool
+      - ./config/node.lua:/usr/local/etc/tarantool/instances.enabled/node1.lua
+    tty: true
+    networks:
+      - ttnet
+
+  tt-node-2:
+    image: docker.affisecorp.com/library/tarantool:1.10.2
+    container_name: tt-node-2
+    environment:
+      - "INSTANCE_NAME=node2"
+    command: >
+      sh -c "tarantoolctl start node2; read"
+    volumes:
+      - ./data:/var/lib/tarantool
+      - ./logs:/var/log/tarantool
+      - ./config/node.lua:/usr/local/etc/tarantool/instances.enabled/node2.lua
+    tty: true
+    networks:
+      - ttnet
+
+networks:
+  ttnet:
+    external: false
